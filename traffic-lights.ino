@@ -16,7 +16,7 @@ constexpr byte PEDESTRIAN_PHASE_GREEN_PIN = 10;
 constexpr byte PEDESTRIAN_WAIT_INDICATOR_PIN = 0;
 
 constexpr byte PEDESTRIAN_REQUEST_SWITCH_PIN = 3;     // Must be a pin that supports interrupts
-constexpr byte CAR_PARK_EXIT_REQUEST_SWITCH_PIN = 2;  // Must be a pin that supports interrupts
+constexpr byte CAR_PARK_EXIT_REQUEST_SENSOR_PIN = 2;  // Must be a pin that supports interrupts
 
 constexpr byte BARRIER_WARNING_INDICATOR_PIN = 4;
 constexpr byte BARRIER_SERVO_CONTROL_PIN = 5;  // Must be a pin that supports PWM
@@ -222,19 +222,19 @@ TrafficPhase carParkPhase(CAR_PARK_PHASE_RED_PIN, CAR_PARK_PHASE_AMBER_PIN, CAR_
 PedestrianPhase pedestrianPhase(PEDESTRIAN_PHASE_RED_PIN, PEDESTRIAN_PHASE_GREEN_PIN);
 Barrier carParkExitBarrier(BARRIER_SERVO_CONTROL_PIN, BARRIER_WARNING_INDICATOR_PIN);
 PedestrianCrossing pedestrianCrossing(pedestrianPhase, PEDESTRIAN_REQUEST_SWITCH_PIN, PEDESTRIAN_WAIT_INDICATOR_PIN);
-CarParkExit carParkExit(carParkPhase, carParkExitBarrier, CAR_PARK_EXIT_REQUEST_SWITCH_PIN);
+CarParkExit carParkExit(carParkPhase, carParkExitBarrier, CAR_PARK_EXIT_REQUEST_SENSOR_PIN);
 
 void handlePedestrianButtonPressed() {
   pedestrianCrossing.request();
 }
 
-void handleCarParkExitRequestButtonPressed() {
+void handleCarParkExitRequestSensorActivated() {
   carParkExit.request();
 }
 
 void setup() {
   attachInterrupt(digitalPinToInterrupt(PEDESTRIAN_REQUEST_SWITCH_PIN), handlePedestrianButtonPressed, FALLING);
-  attachInterrupt(digitalPinToInterrupt(CAR_PARK_EXIT_REQUEST_SWITCH_PIN), handleCarParkExitRequestButtonPressed, FALLING);
+  attachInterrupt(digitalPinToInterrupt(CAR_PARK_EXIT_REQUEST_SENSOR_PIN), handleCarParkExitRequestSensorActivated, FALLING);
 
   roadPhase.initialise();
   pedestrianCrossing.initialise();
